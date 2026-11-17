@@ -57,3 +57,7 @@ Thumbs.db
 *.log
 *.tmp
 *.bak
+# Environment files
+.env
+.env.backup
+.env.production
