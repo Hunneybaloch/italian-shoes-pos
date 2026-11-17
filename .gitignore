@@ -1,0 +1,59 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+auth.json
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Laravel runtime files
+/storage/*.key
+/storage/app/*
+!/storage/app/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/testing/*
+!/storage/framework/testing/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+# Build outputs
+/public/build/
+/public/hot
+/public/storage
+
+# IDE and operating system files
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Test and local tooling artifacts
+.phpunit.result.cache
+.phpunit.cache/
+.php-cs-fixer.cache
+.phpactor.json
+.phpstorm.meta.php
+.phpunit-watcher.yml
+
+# Local database files and dumps
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+*.sql.gz
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
