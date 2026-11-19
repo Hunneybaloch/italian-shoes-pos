@@ -1,17 +1,17 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Models\\Branch;
-use App\\Models\\Category;
-use App\\Models\\Product;
-use App\\Models\\Role;
-use App\\Models\\User;
-use App\\Services\\StockService;
-use Database\\Seeders\\RolePermissionSeeder;
-use Illuminate\\Foundation\\Testing\\RefreshDatabase;
-use Illuminate\\Validation\\ValidationException;
-use Tests\\TestCase;
+use App\Models\Branch;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Role;
+use App\Models\User;
+use App\Services\StockService;
+use Database\Seeders\RolePermissionSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Validation\ValidationException;
+use Tests\TestCase;
 
 class InventoryOperationsTest extends TestCase
 {
@@ -99,7 +99,7 @@ class InventoryOperationsTest extends TestCase
             'items' => [['product_variant_id' => $this->variant->id, 'quantity' => 6]],
         ])->assertRedirect(route('transfers.index'));
 
-        $transfer = \\App\\Models\\StockTransfer::firstOrFail();
+        $transfer = \App\Models\StockTransfer::firstOrFail();
         $this->actingAs($this->owner)->patch(route('transfers.approve', $transfer))->assertRedirect();
         $this->assertDatabaseHas('branch_stocks', [
             'branch_id' => $this->branch->id, 'product_variant_id' => $this->variant->id, 'quantity' => 4,

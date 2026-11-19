@@ -1,13 +1,13 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\CashTransaction;
-use App\\Models\\Purchase;
-use App\\Models\\SupplierPayment;
-use Illuminate\\Http\\Request;
-use Illuminate\\Support\\Facades\\DB;
-use Illuminate\\Validation\\Rule;
+use App\Models\CashTransaction;
+use App\Models\Purchase;
+use App\Models\SupplierPayment;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class SupplierPaymentController extends Controller
 {

@@ -1,16 +1,18 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\Branch;
-use App\\Models\\Customer;
-use App\\Models\\ProductVariant;
-use App\\Models\\Sale;
-use App\\Services\\StockService;
-use Illuminate\\Http\\Request;
-use Illuminate\\Support\\Facades\\DB;
-use Illuminate\\Support\\Str;
-use Illuminate\\Validation\\Rule;
+use App\Models\Branch;
+use App\Models\Customer;
+use App\Models\ProductVariant;
+use App\Models\Sale;
+use App\Models\CashTransaction;
+use App\Models\SystemSetting;
+use App\Services\StockService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class PosController extends Controller
 {
@@ -19,8 +21,9 @@ class PosController extends Controller
         $user = $request->user();
         $branches = $user->hasRole('owner') ? Branch::where('is_active', true)->orderBy('name')->get() : collect();
         $customers = Customer::where('is_active', true)->orderBy('name')->get();
+        $defaultTaxRate = (float) (SystemSetting::where('key', 'default_tax_rate')->value('value') ?? 0);
         $branchId = $user->hasRole('owner') ? $request->integer('branch_id') : $user->branch_id;
-        return view('pos.index', compact('branches', 'customers', 'branchId'));
+        return view('pos.index', compact('branches', 'customers', 'branchId', 'defaultTaxRate'));
     }
 
     public function search(Request $request)
@@ -53,7 +56,6 @@ class PosController extends Controller
             'branch_id' => ['required','integer',Rule::exists('branches','id')->where('is_active',true)],
             'customer_id' => ['nullable','integer',Rule::exists('customers','id')->where('is_active',true)],
             'discount_amount' => ['nullable','numeric','min:0','max:9999999999'],
-            'tax_amount' => ['nullable','numeric','min:0','max:9999999999'],
             'payment_method' => ['required',Rule::in(['cash','card','bank_transfer','mobile_wallet','other'])],
             'payment_reference' => ['nullable','string','max:120'],
             'amount_paid' => ['required','numeric','min:0','max:9999999999'],
@@ -75,7 +77,9 @@ class PosController extends Controller
             }
             $subtotal = round($subtotal, 2);
             $discount = round((float) ($data['discount_amount'] ?? 0), 2);
-            $tax = round((float) ($data['tax_amount'] ?? 0), 2);
+            abort_if($discount > 0 && ! $user->hasPermission('sales.discount'), 403, 'You do not have permission to apply sales discounts.');
+            $taxRate = (float) (SystemSetting::where('key', 'default_tax_rate')->value('value') ?? 0);
+            $tax = round(max(0, ($subtotal - $discount) * $taxRate / 100), 2);
             abort_if($discount > $subtotal, 422, 'Discount cannot exceed the subtotal.');
             $total = round($subtotal - $discount + $tax, 2);
             $paid = round((float) $data['amount_paid'], 2);
@@ -147,6 +151,7 @@ class PosController extends Controller
         $user = $request->user();
         abort_unless($user->hasRole('owner') || $user->branch_id === $sale->branch_id, 403);
         $sale->load(['branch','customer','cashier','items','payments']);
-        return view('sales.receipt', compact('sale'));
+        $settings = SystemSetting::pluck('value', 'key');
+        return view('sales.receipt', compact('sale', 'settings'));
     }
 }

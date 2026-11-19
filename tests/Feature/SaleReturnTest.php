@@ -1,17 +1,17 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Models\\Branch;
-use App\\Models\\Category;
-use App\\Models\\Product;
-use App\\Models\\Role;
-use App\\Models\\Sale;
-use App\\Models\\User;
-use App\\Services\\StockService;
-use Database\\Seeders\\RolePermissionSeeder;
-use Illuminate\\Foundation\\Testing\\RefreshDatabase;
-use Tests\\TestCase;
+use App\Models\Branch;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Role;
+use App\Models\Sale;
+use App\Models\User;
+use App\Services\StockService;
+use Database\Seeders\RolePermissionSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class SaleReturnTest extends TestCase
 {
@@ -64,7 +64,7 @@ class SaleReturnTest extends TestCase
         $this->actingAs($this->owner)->post(route('returns.store',$sale),[
             'return_type'=>'refund','reason'=>'Duplicate request',
             'items'=>[['sale_item_id'=>$saleItem->id,'quantity'=>2]],
-        ])->assertSessionHasErrors();
+        ])->assertStatus(422);
     }
 
     public function test_exchange_restocks_returned_pair_and_deducts_replacement_pair(): void

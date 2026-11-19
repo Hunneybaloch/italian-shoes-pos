@@ -1,15 +1,15 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Models\\Branch;
-use App\\Models\\Purchase;
-use App\\Models\\Supplier;
-use App\\Models\\Role;
-use App\\Models\\User;
-use Database\\Seeders\\RolePermissionSeeder;
-use Illuminate\\Foundation\\Testing\\RefreshDatabase;
-use Tests\\TestCase;
+use App\Models\Branch;
+use App\Models\Purchase;
+use App\Models\Supplier;
+use App\Models\Role;
+use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class AccountingReportsTest extends TestCase
 {
@@ -36,7 +36,7 @@ class AccountingReportsTest extends TestCase
 
         $this->assertDatabaseHas('expenses',['branch_id'=>$this->branch->id,'amount'=>'1500.00','category'=>'Utilities']);
         $this->assertDatabaseHas('cash_transactions',['branch_id'=>$this->branch->id,'direction'=>'out','type'=>'expense','amount'=>'1500.00']);
-        $this->actingAs($this->owner)->get(route('reports.index'))->assertOk()->assertSee('1500.00');
+        $this->actingAs($this->owner)->get(route('reports.index'))->assertOk()->assertSee('1,500.00');
     }
 
     public function test_supplier_payment_cannot_exceed_purchase_due_and_cash_is_logged(): void
@@ -59,6 +59,38 @@ class AccountingReportsTest extends TestCase
             ->post(route('purchases.payments.store',$purchase),[
                 'amount'=>4000,'payment_method'=>'cash',
             ])->assertStatus(422);
+    }
+
+
+
+    public function test_owner_can_export_filtered_sales_csv(): void
+    {
+        $response=$this->actingAs($this->owner)->get(route('reports.export',[
+            'from'=>now()->toDateString(),
+            'to'=>now()->toDateString(),
+            'branch_id'=>$this->branch->id,
+        ]));
+        $response->assertOk();
+        $response->assertHeader('content-type','text/csv; charset=UTF-8');
+    }
+
+    public function test_manual_cashbook_adjustment_is_visible_in_cashbook(): void
+    {
+        $this->actingAs($this->owner)->post(route('cashbook.store'),[
+            'branch_id'=>$this->branch->id,
+            'direction'=>'in',
+            'amount'=>7500,
+            'description'=>'Opening cash float',
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('cash_transactions',[
+            'branch_id'=>$this->branch->id,
+            'direction'=>'in',
+            'type'=>'cash_adjustment',
+            'amount'=>'7500.00',
+        ]);
+        $this->actingAs($this->owner)->get(route('cashbook.index'))
+            ->assertOk()->assertSee('Opening cash float');
     }
 
     public function test_non_cash_expense_does_not_change_cash_ledger(): void
