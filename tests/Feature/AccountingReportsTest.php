@@ -58,7 +58,7 @@ class AccountingReportsTest extends TestCase
         $this->actingAs($this->owner)->from(route('supplier-payments.index'))
             ->post(route('purchases.payments.store',$purchase),[
                 'amount'=>4000,'payment_method'=>'cash',
-            ])->assertSessionHasErrors();
+            ])->assertStatus(422);
     }
 
     public function test_non_cash_expense_does_not_change_cash_ledger(): void
