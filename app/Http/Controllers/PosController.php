@@ -119,6 +119,14 @@ class PosController extends Controller
                 'reference' => $data['payment_reference'] ?? null,
                 'paid_at' => now(),
             ]);
+            if ($data['payment_method'] === 'cash') {
+                CashTransaction::create([
+                    'branch_id' => $data['branch_id'], 'created_by' => $user->id,
+                    'direction' => 'in', 'type' => 'sale', 'amount' => $total,
+                    'payment_method' => 'cash', 'reference_type' => 'sale', 'reference_id' => $sale->id,
+                    'description' => 'Cash received for '.$sale->receipt_number, 'transacted_at' => now(),
+                ]);
+            }
             return $sale;
         });
 
