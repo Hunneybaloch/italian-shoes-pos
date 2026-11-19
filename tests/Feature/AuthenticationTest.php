@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Branch;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -58,5 +60,42 @@ class AuthenticationTest extends TestCase
     {
         $this->get(route('dashboard'))
             ->assertRedirect(route('login'));
+    }
+
+    public function test_employee_of_inactive_branch_cannot_log_in(): void
+    {
+        $branch = Branch::create([
+            'name' => 'Inactive Test Branch',
+            'code' => 'INACTIVE-1',
+            'is_active' => false,
+        ]);
+
+        $employee = User::factory()->create([
+            'name' => 'Branch Employee',
+            'username' => 'branch-employee',
+            'email' => 'branch-employee@example.test',
+            'password' => 'test-password',
+            'branch_id' => $branch->id,
+            'is_active' => true,
+        ]);
+
+        $managerRole = Role::create([
+            'name' => 'Branch Manager',
+            'slug' => 'branch-manager',
+            'description' => 'Test role',
+            'is_active' => true,
+        ]);
+
+        $employee->roles()->attach($managerRole->id);
+
+        $this->from(route('login'))
+            ->post(route('login.submit'), [
+                'login' => 'branch-employee',
+                'password' => 'test-password',
+            ])
+            ->assertRedirect(route('login'))
+            ->assertSessionHasErrors('login');
+
+        $this->assertGuest();
     }
 }
