@@ -61,7 +61,13 @@ Each stage must be tested and approved before moving to the next stage.
 
 ## GitHub Codespaces quick start
 
-Open this repository in GitHub Codespaces. In the Codespaces terminal, run this single command:
+If your existing Codespace is currently on `main`, run this single command in its terminal to switch to the tested development branch and start setup:
+
+```bash
+git fetch origin automation/codespaces-ci && git checkout automation/codespaces-ci && bash scripts/codespaces-setup.sh
+```
+
+If you create a new Codespace directly from the `automation/codespaces-ci` branch, run only:
 
 ```bash
 bash scripts/codespaces-setup.sh
