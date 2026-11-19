@@ -42,7 +42,11 @@ class InventoryController extends Controller
             (int) $data['branch_id'], $variant->id,
             $data['direction'] === 'in' ? (int) $data['quantity'] : -(int) $data['quantity'],
             $user->id, 'adjustment', null, null, $data['notes']
-        )->update(['reorder_level' => (int) ($data['reorder_level'] ?? 0)]));
+        );
+        if (array_key_exists('reorder_level', $data) && $data['reorder_level'] !== null) {
+            $stock->update(['reorder_level' => (int) $data['reorder_level']]);
+        }
+        });
         return back()->with('success', 'Stock adjustment saved and recorded in the stock ledger.');
     }
 
