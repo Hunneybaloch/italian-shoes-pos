@@ -11,6 +11,9 @@ use App\Http\Controllers\StockTransferController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SaleReturnController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SupplierPaymentController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -79,6 +82,21 @@ Route::middleware('auth')->group(function () {
         Route::get('/returns', [SaleReturnController::class, 'index'])->name('returns.index');
         Route::get('/sales/{sale}/returns/create', [SaleReturnController::class, 'create'])->name('returns.create');
         Route::post('/sales/{sale}/returns', [SaleReturnController::class, 'store'])->name('returns.store');
+    });
+
+
+    Route::middleware('permission:expenses.view')->group(function () {
+        Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+    });
+    Route::middleware('permission:expenses.manage')->group(function () {
+        Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
+    });
+    Route::middleware('permission:reports.view')->group(function () {
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    });
+    Route::middleware('permission:inventory.manage')->group(function () {
+        Route::get('/supplier-payments', [SupplierPaymentController::class, 'index'])->name('supplier-payments.index');
+        Route::post('/purchases/{purchase}/payments', [SupplierPaymentController::class, 'store'])->name('purchases.payments.store');
     });
 
     Route::middleware('owner')->group(function () {
