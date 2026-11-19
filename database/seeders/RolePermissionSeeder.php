@@ -155,6 +155,7 @@ class RolePermissionSeeder extends Seeder
                     'products.view',
                     'products.create',
                     'products.edit',
+                    'products.delete',
                     'inventory.view',
                     'inventory.manage',
                     'inventory.transfer',

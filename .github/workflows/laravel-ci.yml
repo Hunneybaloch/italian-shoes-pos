@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - automation/**
+      - stage-2-*
   pull_request:
   workflow_dispatch:
 
