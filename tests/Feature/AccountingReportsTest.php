@@ -61,6 +61,26 @@ class AccountingReportsTest extends TestCase
             ])->assertStatus(422);
     }
 
+
+    public function test_manual_cashbook_adjustment_is_visible_in_cashbook(): void
+    {
+        $this->actingAs($this->owner)->post(route('cashbook.store'),[
+            'branch_id'=>$this->branch->id,
+            'direction'=>'in',
+            'amount'=>7500,
+            'description'=>'Opening cash float',
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('cash_transactions',[
+            'branch_id'=>$this->branch->id,
+            'direction'=>'in',
+            'type'=>'cash_adjustment',
+            'amount'=>'7500.00',
+        ]);
+        $this->actingAs($this->owner)->get(route('cashbook.index'))
+            ->assertOk()->assertSee('Opening cash float');
+    }
+
     public function test_non_cash_expense_does_not_change_cash_ledger(): void
     {
         $this->actingAs($this->owner)->post(route('expenses.store'),[
