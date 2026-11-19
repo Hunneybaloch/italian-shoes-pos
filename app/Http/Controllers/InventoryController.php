@@ -38,15 +38,23 @@ class InventoryController extends Controller
         $user = $request->user();
         abort_unless($user->hasRole('owner') || $user->branch_id === (int) $data['branch_id'], 403);
         $variant = ProductVariant::whereKey($data['product_variant_id'])->where('is_active', true)->firstOrFail();
-        DB::transaction(fn () => $stockService->change(
-            (int) $data['branch_id'], $variant->id,
-            $data['direction'] === 'in' ? (int) $data['quantity'] : -(int) $data['quantity'],
-            $user->id, 'adjustment', null, null, $data['notes']
-        );
-        if (array_key_exists('reorder_level', $data) && $data['reorder_level'] !== null) {
-            $stock->update(['reorder_level' => (int) $data['reorder_level']]);
-        }
+
+        DB::transaction(function () use ($stockService, $data, $variant, $user) {
+            $stock = $stockService->change(
+                (int) $data['branch_id'],
+                $variant->id,
+                $data['direction'] === 'in' ? (int) $data['quantity'] : -(int) $data['quantity'],
+                $user->id,
+                'adjustment',
+                null,
+                null,
+                $data['notes']
+            );
+            if (array_key_exists('reorder_level', $data) && $data['reorder_level'] !== null) {
+                $stock->update(['reorder_level' => (int) $data['reorder_level']]);
+            }
         });
+
         return back()->with('success', 'Stock adjustment saved and recorded in the stock ledger.');
     }
 
