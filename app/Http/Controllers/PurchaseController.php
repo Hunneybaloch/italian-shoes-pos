@@ -38,7 +38,7 @@ class PurchaseController extends Controller
         $user = $request->user();
         $data = $request->validate([
             'branch_id' => ['required', 'integer', Rule::exists('branches', 'id')->where('is_active', true)],
-            'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
+            'supplier_id' => ['nullable', 'integer', Rule::exists('suppliers','id')->where('is_active',true)],
             'invoice_number' => ['nullable', 'string', 'max:100'],
             'purchase_date' => ['required', 'date'],
             'discount_amount' => ['nullable', 'numeric', 'min:0', 'max:9999999999'],
