@@ -7,7 +7,7 @@ use App\\Http\\Controllers\\ProductController;
 use App\\Http\\Controllers\\InventoryController;
 use App\\Http\\Controllers\\SupplierController;
 use App\\Http\\Controllers\\PurchaseController;
-use App\\Http\\Controllers\\StockTransferController;\nuse App\\Http\\Controllers\\PosController;\nuse App\\Http\\Controllers\\CustomerController;\nuse App\\Http\\Controllers\\SaleReturnController;
+use App\\Http\\Controllers\\StockTransferController;\nuse App\\Http\\Controllers\\PosController;\nuse App\\Http\\Controllers\\CustomerController;\nuse App\\Http\\Controllers\\SaleReturnController;\nuse App\\Http\\Controllers\\CustomerController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
