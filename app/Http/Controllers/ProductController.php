@@ -135,8 +135,8 @@ class ProductController extends Controller
         $validated = $request->validate([
             'product' => ['required', 'array'],
             'product.name' => ['required', 'string', 'max:180'],
-            'product.category_id' => ['required', 'integer', 'exists:categories,id'],
-            'product.brand_id' => ['nullable', 'integer', 'exists:brands,id'],
+            'product.category_id' => ['required', 'integer', Rule::exists('categories', 'id')->where('is_active', true)],
+            'product.brand_id' => ['nullable', 'integer', Rule::exists('brands', 'id')->where('is_active', true)],
             'product.model_code' => ['nullable', 'string', 'max:80', Rule::unique('products', 'model_code')->ignore($product?->id)],
             'product.description' => ['nullable', 'string', 'max:5000'],
             'variants' => ['required', 'array', 'min:1', 'max:100'],
