@@ -1,10 +1,10 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\Supplier;
-use Illuminate\\Http\\Request;
-use Illuminate\\Validation\\Rule;
+use App\Models\Supplier;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class SupplierController extends Controller
 {
