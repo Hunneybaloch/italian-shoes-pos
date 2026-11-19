@@ -25,6 +25,21 @@ Build one centrally managed shoe catalogue with branch-specific stock. The Owner
 - `suppliers`, `purchases`, `purchase_items`: supplier purchasing and branch receiving.
 - `stock_transfers`, `stock_transfer_items`: auditable movement between two different branches.
 
+## Implemented functionality
+
+- Category and brand creation, editing, activation and deactivation.
+- Product list with search by product/model/SKU/barcode, category filter and active-status filter.
+- Product creation and editing with multiple size/colour variants.
+- Required unique SKU, optional unique barcode, cost price and selling price in PKR.
+- Product activation/deactivation instead of destructive deletion.
+- Branch stock ledger with transaction-protected stock adjustments.
+- Per-branch reorder thresholds and low-stock filtering.
+- Supplier directory with create, edit and activate/deactivate.
+- Purchase receiving with supplier invoice, variants, quantities, unit costs and discounts. Stock and movement ledger update in one transaction.
+- Inter-branch transfer request, source approval/dispatch and destination receipt.
+- Server-side permission middleware and branch isolation.
+- Automated tests for catalogue, stock integrity, purchase receiving, transfers and role restrictions.
+
 ## Data integrity rules
 
 - All money is stored as decimal and displayed in PKR.
@@ -32,41 +47,14 @@ Build one centrally managed shoe catalogue with branch-specific stock. The Owner
 - A variant is identified by product + size + colour.
 - SKU is mandatory and globally unique. Barcode is optional and globally unique when supplied.
 - Stock is always branch-specific; no shared unallocated stock bucket.
-- Purchase receiving and transfer dispatch/receipt must update stock and append movement records in database transactions.
+- Purchase receiving and transfer dispatch/receipt update stock and append movement records in database transactions.
 - Historical transactions and movements must not be physically deleted.
 - No sample branches, employees, suppliers, purchases or stock are seeded.
-
-## Implementation sequence
-
-A. Catalogue and variant management.
-B. Branch stock ledger and safe stock adjustments.
-C. Suppliers and purchase receiving.
-D. Inter-branch transfer workflow.
-E. Low-stock views, role restrictions and full regression tests.
 
 ## Safety
 
 New migrations are additive. They do not drop, truncate or reset existing tables or records. No real branch or product data is inserted by migrations.
 
+## Validation
 
-## Catalogue implementation status
-
-### Implemented on `stage-2-products-inventory`
-
-- Shared category and brand creation with generated unique slugs.
-- Product listing with search by product/model/SKU/barcode, category filter and active-status filter.
-- Product creation and editing with one or more size/colour variants.
-- Required unique SKU, optional unique barcode, cost price and selling price in PKR.
-- Product activation/deactivation instead of destructive deletion.
-- Server-side permission middleware: Owner has full access; Stock Manager can create/edit; Branch Manager and Cashier can view.
-- Product/variant creation and updates are wrapped in database transactions.
-- Feature tests cover category/brand/product creation, multi-variant creation, permissions, duplicate SKUs and editing.
-
-### Remaining Stage 2 work
-
-- Category/brand edit and activation management.
-- Stock ledger and safe adjustment screens.
-- Supplier management and purchase receiving.
-- Inter-branch stock transfer workflow.
-- Low-stock dashboard and reporting.
-- Full MySQL/MariaDB verification and final regression test pass.
+The complete development branch has automated coverage for inventory operations. Latest GitHub Actions validation passed on SQLite and MySQL 8.4. Final manual testing on the actual shop environment remains required.
