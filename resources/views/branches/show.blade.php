@@ -95,6 +95,7 @@
                 </div>
                 <div class="actions">
                     <span class="status {{ $branch->is_active ? 'active' : 'inactive' }}">{{ $branch->is_active ? 'Active' : 'Inactive' }}</span>
+                    <a class="btn btn-light" href="{{ route('branches.edit', $branch) }}">Edit Branch</a>
                     <form method="POST" action="{{ route('branches.toggle-status', $branch) }}">
                         @csrf
                         @method('PATCH')
