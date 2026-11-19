@@ -36,7 +36,7 @@ class AccountingReportsTest extends TestCase
 
         $this->assertDatabaseHas('expenses',['branch_id'=>$this->branch->id,'amount'=>'1500.00','category'=>'Utilities']);
         $this->assertDatabaseHas('cash_transactions',['branch_id'=>$this->branch->id,'direction'=>'out','type'=>'expense','amount'=>'1500.00']);
-        $this->actingAs($this->owner)->get(route('reports.index'))->assertOk()->assertSee('1500.00');
+        $this->actingAs($this->owner)->get(route('reports.index'))->assertOk()->assertSee('1,500.00');
     }
 
     public function test_supplier_payment_cannot_exceed_purchase_due_and_cash_is_logged(): void
