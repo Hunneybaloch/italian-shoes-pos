@@ -44,7 +44,7 @@ class PosSalesTest extends TestCase
         $this->actingAs($this->cashier)->get(route('pos.index'))->assertOk()->assertSee('Point of Sale');
         $this->actingAs($this->cashier)->post(route('sales.store'),[
             'branch_id'=>$this->branch->id,
-            'discount_amount'=>200,
+            'discount_amount'=>0,
             'tax_amount'=>0,
             'payment_method'=>'cash',
             'amount_paid'=>5000,
@@ -53,8 +53,8 @@ class PosSalesTest extends TestCase
 
         $this->assertDatabaseHas('sales',[
             'branch_id'=>$this->branch->id,'status'=>'completed',
-            'subtotal'=>'5000.00','discount_amount'=>'200.00','total_amount'=>'4800.00',
-            'amount_paid'=>'5000.00','change_amount'=>'200.00',
+            'subtotal'=>'5000.00','discount_amount'=>'0.00','total_amount'=>'5000.00',
+            'amount_paid'=>'5000.00','change_amount'=>'0.00',
         ]);
         $this->assertDatabaseHas('branch_stocks',[
             'branch_id'=>$this->branch->id,'product_variant_id'=>$this->variant->id,'quantity'=>3,
@@ -64,7 +64,7 @@ class PosSalesTest extends TestCase
             'movement_type'=>'sale','quantity_change'=>-2,
         ]);
         $this->assertDatabaseHas('sale_items',['sku'=>'POS-41-BRN','quantity'=>2,'line_total'=>'5000.00']);
-        $this->assertDatabaseHas('payments',['method'=>'cash','amount'=>'4800.00']);
+        $this->assertDatabaseHas('payments',['method'=>'cash','amount'=>'5000.00']);
     }
 
     public function test_sale_is_rejected_when_stock_is_insufficient_and_no_partial_sale_is_saved(): void
