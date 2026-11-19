@@ -1,13 +1,13 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\Branch;
-use App\\Models\\BranchStock;
-use App\\Models\\Product;
-use App\\Models\\Sale;
-use App\\Models\\User;
-use Illuminate\\Http\\Request;
+use App\Models\Branch;
+use App\Models\BranchStock;
+use App\Models\Product;
+use App\Models\Sale;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
