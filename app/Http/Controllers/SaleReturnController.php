@@ -96,6 +96,14 @@ class SaleReturnController extends Controller
                 'return_type'=>$data['return_type'],'status'=>'completed','reason'=>$data['reason'],
                 'returned_value'=>$returnValue,'refund_amount'=>$refund,'refund_method'=>$refundMethod,'processed_at'=>now(),
             ]);
+            if ($refund > 0 && $refundMethod === 'cash') {
+                CashTransaction::create([
+                    'branch_id' => $lockedSale->branch_id, 'created_by' => $user->id,
+                    'direction' => 'out', 'type' => 'sale_refund', 'amount' => $refund,
+                    'payment_method' => 'cash', 'reference_type' => 'sale_return', 'reference_id' => $record->id,
+                    'description' => 'Cash refund '.$record->return_number, 'transacted_at' => now(),
+                ]);
+            }
             foreach($resolved as $entry){
                 $item=$entry['sale_item'];$qty=$entry['quantity'];
                 $record->items()->create([
@@ -130,6 +138,14 @@ class SaleReturnController extends Controller
                 }
                 if($paid>0){
                     $replacementSale->payments()->create(['method'=>$data['payment_method'],'amount'=>$paid,'reference'=>null,'paid_at'=>now()]);
+                    if ($data['payment_method'] === 'cash') {
+                        CashTransaction::create([
+                            'branch_id' => $lockedSale->branch_id, 'created_by' => $user->id,
+                            'direction' => 'in', 'type' => 'exchange_balance', 'amount' => $paid,
+                            'payment_method' => 'cash', 'reference_type' => 'sale', 'reference_id' => $replacementSale->id,
+                            'description' => 'Cash exchange balance '.$record->return_number, 'transacted_at' => now(),
+                        ]);
+                    }
                 }
             }
 
