@@ -227,7 +227,7 @@
             <a href="{{ route('dashboard') }}" class="active">▦ &nbsp; Dashboard</a>
             <a href="{{ route('branches.index') }}">▣ &nbsp; Branch Management</a>
             <a href="#">♙ &nbsp; User Management</a>
-            <a href="#">◈ &nbsp; Products</a>
+            <a href="{{ route('products.index') }}">◈ &nbsp; Products</a>
             <a href="#">▤ &nbsp; Inventory</a>
             <a href="#">▣ &nbsp; Sales & POS</a>
             <a href="#">◷ &nbsp; Expenses</a>
@@ -311,7 +311,7 @@
                     <div class="quick-links">
                         <a href="{{ route('branches.create') }}">＋ Add Branch</a>
                         <a href="#">＋ Add Employee</a>
-                        <a href="#">＋ Add Product</a>
+                        <a href="{{ route('products.create') }}">＋ Add Product</a>
                         <a href="#">▤ View Reports</a>
                     </div>
                 </div>
