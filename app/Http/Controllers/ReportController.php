@@ -32,7 +32,7 @@ class ReportController extends Controller
         $grossSales=(float)(clone $sales)->sum('total_amount');
         $returns=SaleReturn::where('status','completed')->whereBetween('processed_at',[$from.' 00:00:00',$to.' 23:59:59'])
             ->when($branchId,fn($q)=>$q->where('branch_id',$branchId));
-        $refunds=(float)(clone $returns)->sum('refund_amount');
+        $refunds=(float)(clone $returns)->sum('returned_value');
         $expenses=(float)Expense::whereBetween('expense_date',[$from,$to])->when($branchId,fn($q)=>$q->where('branch_id',$branchId))->sum('amount');
         $cogs=(float)DB::table('sale_items')->join('sales','sales.id','=','sale_items.sale_id')
             ->where('sales.status','completed')->whereBetween('sales.sold_at',[$from.' 00:00:00',$to.' 23:59:59'])
