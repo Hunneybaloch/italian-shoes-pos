@@ -27,6 +27,7 @@ class SaleReturnController extends Controller
     {
         $user=$request->user();
         abort_unless($user->hasRole('owner') || $user->branch_id===$sale->branch_id,403);
+        abort_unless($sale->status === 'completed', 422, 'Only completed sales can be returned.');
         $sale->load('items');
         $variants=ProductVariant::with('product')->where('is_active',true)->orderBy('sku')->get();
         return view('returns.create',compact('sale','variants'));
@@ -52,6 +53,7 @@ class SaleReturnController extends Controller
 
         $return=DB::transaction(function() use($sale,$data,$user,$stockService){
             $lockedSale=Sale::whereKey($sale->id)->lockForUpdate()->firstOrFail();
+            abort_unless($lockedSale->status === 'completed', 422, 'Only completed sales can be returned.');
             $selected=collect($data['items']);
             $returnValue=0.0;
             $resolved=[];
