@@ -19,8 +19,9 @@ class PosController extends Controller
         $user = $request->user();
         $branches = $user->hasRole('owner') ? Branch::where('is_active', true)->orderBy('name')->get() : collect();
         $customers = Customer::where('is_active', true)->orderBy('name')->get();
+        $defaultTaxRate = (float) (SystemSetting::where('key', 'default_tax_rate')->value('value') ?? 0);
         $branchId = $user->hasRole('owner') ? $request->integer('branch_id') : $user->branch_id;
-        return view('pos.index', compact('branches', 'customers', 'branchId'));
+        return view('pos.index', compact('branches', 'customers', 'branchId', 'defaultTaxRate'));
     }
 
     public function search(Request $request)
@@ -147,6 +148,7 @@ class PosController extends Controller
         $user = $request->user();
         abort_unless($user->hasRole('owner') || $user->branch_id === $sale->branch_id, 403);
         $sale->load(['branch','customer','cashier','items','payments']);
-        return view('sales.receipt', compact('sale'));
+        $settings = SystemSetting::pluck('value', 'key');
+        return view('sales.receipt', compact('sale', 'settings'));
     }
 }
