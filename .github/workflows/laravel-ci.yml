@@ -76,5 +76,5 @@ jobs:
       - name: Build frontend assets
         run: npm run build
 
-      - name: Run automated tests
-        run: php artisan test
+      - name: Run automated tests against an isolated SQLite test database
+        run: DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan test
