@@ -32,6 +32,7 @@ class InventoryController extends Controller
             'product_variant_id' => ['required', 'integer', 'exists:product_variants,id'],
             'direction' => ['required', Rule::in(['in', 'out'])],
             'quantity' => ['required', 'integer', 'min:1', 'max:1000000'],
+            'reorder_level' => ['nullable', 'integer', 'min:0', 'max:1000000'],
             'notes' => ['required', 'string', 'max:1000'],
         ]);
         $user = $request->user();
@@ -41,7 +42,7 @@ class InventoryController extends Controller
             (int) $data['branch_id'], $variant->id,
             $data['direction'] === 'in' ? (int) $data['quantity'] : -(int) $data['quantity'],
             $user->id, 'adjustment', null, null, $data['notes']
-        ));
+        )->update(['reorder_level' => (int) ($data['reorder_level'] ?? 0)]));
         return back()->with('success', 'Stock adjustment saved and recorded in the stock ledger.');
     }
 
