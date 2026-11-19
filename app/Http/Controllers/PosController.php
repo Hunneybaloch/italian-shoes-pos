@@ -51,7 +51,7 @@ class PosController extends Controller
         $user = $request->user();
         $data = $request->validate([
             'branch_id' => ['required','integer',Rule::exists('branches','id')->where('is_active',true)],
-            'customer_id' => ['nullable','integer','exists:customers,id'],
+            'customer_id' => ['nullable','integer',Rule::exists('customers','id')->where('is_active',true)],
             'discount_amount' => ['nullable','numeric','min:0','max:9999999999'],
             'tax_amount' => ['nullable','numeric','min:0','max:9999999999'],
             'payment_method' => ['required',Rule::in(['cash','card','bank_transfer','mobile_wallet','other'])],
