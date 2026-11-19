@@ -115,7 +115,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('permission:reports.export')->group(function () {
         Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
     });
-\n    Route::middleware('permission:reports.view')->group(function () {
+
+    Route::middleware('permission:reports.view')->group(function () {
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     });
     Route::middleware('permission:inventory.manage')->group(function () {
