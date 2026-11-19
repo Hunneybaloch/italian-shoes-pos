@@ -11,7 +11,7 @@
 <script>
 let cart=[];
 function money(n){return Number(n||0).toFixed(2)}
-function esc(s){return String(s??'').replace(/[&<>\"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#039;'}[ch]))}
+function esc(s){return String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
 function branch(){return document.getElementById('branch').value}
 async function searchProducts(){const q=document.getElementById('search').value.trim();if(!q)return; if(!branch()){alert('Select a branch first.');return}document.getElementById('formBranch').value=branch();const url='{{ route('pos.search') }}?q='+encodeURIComponent(q)+'&branch_id='+encodeURIComponent(branch());const r=await fetch(url,{headers:{'Accept':'application/json'}});if(!r.ok){document.getElementById('results').textContent='Search failed. Check branch access.';return}const data=await r.json();const box=document.getElementById('results');box.innerHTML='';if(!data.length){box.textContent='No matching active products found.';return}data.forEach(v=>{const b=document.createElement('button');b.type='button';b.disabled=v.stock<1;b.textContent=v.name+' | '+v.size+' / '+v.color+' | '+v.sku+' | PKR '+money(v.price)+' | Stock '+v.stock;b.onclick=()=>add(v);box.appendChild(b)})}
 function add(v){const found=cart.find(x=>x.id===v.id);if(found){if(found.qty>=v.stock){alert('Not enough stock.');return}found.qty++}else cart.push({...v,qty:1});render()}
