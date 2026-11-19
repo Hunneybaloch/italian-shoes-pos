@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -49,7 +50,9 @@ class UserController extends Controller
         $branchId=$actor->hasRole('owner')
             ? ($data['role']==='owner'?null:($data['branch_id']??null))
             : $actor->branch_id;
-        abort_if($data['role']!=='owner' && !$branchId,422,'A branch must be assigned to branch employees.');
+        if ($data['role'] !== 'owner' && ! $branchId) {
+            throw ValidationException::withMessages(['branch_id' => 'Select an active branch for this employee.']);
+        }
         if($branchId) abort_unless(Branch::whereKey($branchId)->where('is_active',true)->exists(),422,'Select an active branch.');
 
         $user=DB::transaction(function()use($data,$role,$branchId,$actor,$request){
@@ -92,7 +95,9 @@ class UserController extends Controller
             'branch_id'=>[$actor->hasRole('owner')?'nullable':'prohibited','integer','exists:branches,id'],
         ]);
         $branchId=$actor->hasRole('owner')?($data['role']==='owner'?null:($data['branch_id']??null)):$actor->branch_id;
-        abort_if($data['role']!=='owner' && !$branchId,422,'A branch must be assigned to branch employees.');
+        if ($data['role'] !== 'owner' && ! $branchId) {
+            throw ValidationException::withMessages(['branch_id' => 'Select an active branch for this employee.']);
+        }
         if($branchId) abort_unless(Branch::whereKey($branchId)->where('is_active',true)->exists(),422,'Select an active branch.');
         $role=Role::where('slug',$data['role'])->where('is_active',true)->firstOrFail();
 
@@ -116,6 +121,10 @@ class UserController extends Controller
         $actor=$request->user();
         $this->authorizeEmployee($actor,$employee);
         abort_if($actor->id===$employee->id,422,'You cannot deactivate your own account.');
+        if ($employee->hasRole('owner') && $employee->is_active) {
+            $activeOwners = User::where('is_active', true)->whereHas('roles', fn ($q) => $q->where('slug', 'owner'))->count();
+            abort_if($activeOwners <= 1, 422, 'The last active Owner account cannot be deactivated.');
+        }
         $employee->update(['is_active'=>!$employee->is_active]);
         ActivityLog::create([
             'user_id'=>$actor->id,'branch_id'=>$employee->branch_id,
