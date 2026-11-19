@@ -62,6 +62,18 @@ class AccountingReportsTest extends TestCase
     }
 
 
+
+    public function test_owner_can_export_filtered_sales_csv(): void
+    {
+        $response=$this->actingAs($this->owner)->get(route('reports.export',[
+            'from'=>now()->toDateString(),
+            'to'=>now()->toDateString(),
+            'branch_id'=>$this->branch->id,
+        ]));
+        $response->assertOk();
+        $response->assertHeader('content-type','text/csv; charset=UTF-8');
+    }
+
     public function test_manual_cashbook_adjustment_is_visible_in_cashbook(): void
     {
         $this->actingAs($this->owner)->post(route('cashbook.store'),[
