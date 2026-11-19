@@ -61,6 +61,16 @@ class ReportController extends Controller
             ->when($branchId,fn($q)=>$q->where('branch_id',$branchId));
         $refunds=(float)(clone $returns)->sum('returned_value');
         $expenses=(float)Expense::whereBetween('expense_date',[$from,$to])->when($branchId,fn($q)=>$q->where('branch_id',$branchId))->sum('amount');
+        $netRevenueBeforeTax=(float)DB::table('sales')->where('status','completed')
+            ->whereBetween('sold_at',[$from.' 00:00:00',$to.' 23:59:59'])
+            ->when($branchId,fn($q)=>$q->where('branch_id',$branchId))
+            ->selectRaw('COALESCE(SUM(subtotal - discount_amount),0) as total')->value('total');
+        $returnedRevenueBeforeTax=(float)DB::table('sale_return_items')->join('sale_returns','sale_returns.id','=','sale_return_items.sale_return_id')
+            ->join('sale_items','sale_items.id','=','sale_return_items.sale_item_id')
+            ->join('sales','sales.id','=','sale_returns.sale_id')
+            ->where('sale_returns.status','completed')->whereBetween('sale_returns.processed_at',[$from.' 00:00:00',$to.' 23:59:59'])
+            ->when($branchId,fn($q)=>$q->where('sale_returns.branch_id',$branchId))
+            ->selectRaw('COALESCE(SUM(sale_items.unit_price * sale_return_items.quantity * CASE WHEN sales.subtotal > 0 THEN (sales.subtotal - sales.discount_amount) / sales.subtotal ELSE 0 END),0) as total')->value('total');
         $cogs=(float)DB::table('sale_items')->join('sales','sales.id','=','sale_items.sale_id')
             ->where('sales.status','completed')->whereBetween('sales.sold_at',[$from.' 00:00:00',$to.' 23:59:59'])
             ->when($branchId,fn($q)=>$q->where('sales.branch_id',$branchId))
@@ -70,7 +80,7 @@ class ReportController extends Controller
             ->where('sale_returns.status','completed')->whereBetween('sale_returns.processed_at',[$from.' 00:00:00',$to.' 23:59:59'])
             ->when($branchId,fn($q)=>$q->where('sale_returns.branch_id',$branchId))
             ->selectRaw('COALESCE(SUM(sale_items.unit_cost * sale_return_items.quantity),0) as total')->value('total');
-        $grossProfit=round(($grossSales-$refunds)-($cogs-$returnedCost),2);
+        $grossProfit=round(($netRevenueBeforeTax-$returnedRevenueBeforeTax)-($cogs-$returnedCost),2);
         $netProfit=round($grossProfit-$expenses,2);
         $cashIn=(float)CashTransaction::where('direction','in')->whereBetween('transacted_at',[$from.' 00:00:00',$to.' 23:59:59'])->when($branchId,fn($q)=>$q->where('branch_id',$branchId))->sum('amount');
         $cashOut=(float)CashTransaction::where('direction','out')->whereBetween('transacted_at',[$from.' 00:00:00',$to.' 23:59:59'])->when($branchId,fn($q)=>$q->where('branch_id',$branchId))->sum('amount');
@@ -81,6 +91,6 @@ class ReportController extends Controller
             ->selectRaw('COALESCE(SUM(branch_stocks.quantity * product_variants.cost_price),0) as value')->value('value');
         $lowStock=BranchStock::with(['branch','productVariant.product'])->whereColumn('quantity','<=','reorder_level')
             ->when($branchId,fn($q)=>$q->where('branch_id',$branchId))->orderBy('quantity')->limit(30)->get();
-        return view('reports.index',compact('from','to','branches','branchId','saleCount','grossSales','refunds','expenses','grossProfit','netProfit','cashIn','cashOut','dailySales','stockValue','lowStock'));
+        return view('reports.index',compact('from','to','branches','branchId','saleCount','grossSales','refunds','expenses','netRevenueBeforeTax','grossProfit','netProfit','cashIn','cashOut','dailySales','stockValue','lowStock'));
     }
 }
