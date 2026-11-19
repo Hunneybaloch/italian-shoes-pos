@@ -14,6 +14,32 @@ use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
+
+    public function export(Request $request)
+    {
+        $data=$request->validate([
+            'from'=>['nullable','date'],
+            'to'=>['nullable','date','after_or_equal:from'],
+            'branch_id'=>['nullable','integer','exists:branches,id'],
+        ]);
+        $user=$request->user();
+        $branchId=$user->hasRole('owner')?($data['branch_id']??null):$user->branch_id;
+        $from=$data['from']??now()->startOfMonth()->toDateString();
+        $to=$data['to']??now()->toDateString();
+        $query=Sale::with(['branch','customer','cashier'])->where('status','completed')
+            ->whereBetween('sold_at',[$from.' 00:00:00',$to.' 23:59:59'])
+            ->when($branchId,fn($q)=>$q->where('branch_id',$branchId))
+            ->orderBy('sold_at');
+        return response()->streamDownload(function()use($query){
+            $output=fopen('php://output','w');
+            fputcsv($output,['Receipt','Date','Branch','Customer','Cashier','Subtotal PKR','Discount PKR','Tax PKR','Total PKR','Paid PKR','Change PKR','Status']);
+            foreach($query->cursor() as $sale){
+                fputcsv($output,[$sale->receipt_number,$sale->sold_at,$sale->branch?->name,$sale->customer?->name??'Walk-in',$sale->cashier?->name,$sale->subtotal,$sale->discount_amount,$sale->tax_amount,$sale->total_amount,$sale->amount_paid,$sale->change_amount,$sale->status]);
+            }
+            fclose($output);
+        },'italian-shoes-sales-'.$from.'-to-'.$to.'.csv',['Content-Type'=>'text/csv; charset=UTF-8']);
+    }
+
     public function index(Request $request)
     {
         $data=$request->validate([
