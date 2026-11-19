@@ -74,7 +74,7 @@ class PosSalesTest extends TestCase
             'payment_method'=>'cash',
             'amount_paid'=>25000,
             'items'=>[['product_variant_id'=>$this->variant->id,'quantity'=>50]],
-        ])->assertSessionHasErrors();
+        ])->assertStatus(422);
 
         $this->assertDatabaseCount('sales',0);
         $this->assertDatabaseHas('branch_stocks',[
