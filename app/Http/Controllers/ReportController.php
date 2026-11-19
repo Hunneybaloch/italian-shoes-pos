@@ -1,16 +1,16 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\Branch;
-use App\\Models\\CashTransaction;
-use App\\Models\\Expense;
-use App\\Models\\Sale;
-use App\\Models\\SaleReturn;
-use App\\Models\\BranchStock;
-use Illuminate\\Http\\Request;
-use Illuminate\\Support\\Carbon;
-use Illuminate\\Support\\Facades\\DB;
+use App\Models\Branch;
+use App\Models\CashTransaction;
+use App\Models\Expense;
+use App\Models\Sale;
+use App\Models\SaleReturn;
+use App\Models\BranchStock;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
