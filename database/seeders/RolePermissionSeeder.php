@@ -81,6 +81,7 @@ class RolePermissionSeeder extends Seeder
                 // Sales
                 ['name' => 'View Sales', 'slug' => 'sales.view', 'module' => 'sales'],
                 ['name' => 'Create Sales', 'slug' => 'sales.create', 'module' => 'sales'],
+                ['name' => 'Apply Sales Discounts', 'slug' => 'sales.discount', 'module' => 'sales'],
                 ['name' => 'Cancel Sales', 'slug' => 'sales.cancel', 'module' => 'sales'],
                 ['name' => 'Process Returns', 'slug' => 'sales.returns', 'module' => 'sales'],
 
@@ -129,6 +130,7 @@ class RolePermissionSeeder extends Seeder
                     'inventory.transfer',
                     'sales.view',
                     'sales.create',
+                    'sales.discount',
                     'sales.cancel',
                     'sales.returns',
                     'customers.view',
