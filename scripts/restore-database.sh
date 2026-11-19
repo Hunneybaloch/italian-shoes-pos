@@ -2,7 +2,11 @@
 set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
-if [[ "$1" != "--confirm" || -z "$2" ]]; then
+if [[ $# -lt 2 ]]; then
+  echo "Usage: bash scripts/restore-database.sh --confirm storage/app/private/backups/backup.sql.gz" >&2
+  exit 2
+fi
+if [[ "$1" != "--confirm" ]]; then
   echo "Usage: bash scripts/restore-database.sh --confirm storage/app/private/backups/backup.sql.gz" >&2
   echo "WARNING: This overwrites data in the configured database." >&2
   exit 2
