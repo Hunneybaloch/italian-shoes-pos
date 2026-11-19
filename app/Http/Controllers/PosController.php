@@ -6,6 +6,8 @@ use App\Models\Branch;
 use App\Models\Customer;
 use App\Models\ProductVariant;
 use App\Models\Sale;
+use App\Models\CashTransaction;
+use App\Models\SystemSetting;
 use App\Services\StockService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
