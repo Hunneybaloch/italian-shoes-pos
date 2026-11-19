@@ -18,6 +18,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\CatalogController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -41,6 +42,17 @@ Route::middleware('auth')->group(function () {
             Route::put('/products/{product}', [ProductController::class, 'update'])->whereNumber('product')->name('products.update');
             Route::patch('/products/{product}/status', [ProductController::class, 'toggleStatus'])->whereNumber('product')->name('products.status');
         });
+    });
+
+
+    Route::middleware('permission:products.view')->group(function () {
+        Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
+    });
+    Route::middleware('permission:products.edit')->group(function () {
+        Route::put('/catalog/categories/{category}', [CatalogController::class, 'updateCategory'])->name('catalog.categories.update');
+        Route::patch('/catalog/categories/{category}/status', [CatalogController::class, 'toggleCategory'])->name('catalog.categories.toggle');
+        Route::put('/catalog/brands/{brand}', [CatalogController::class, 'updateBrand'])->name('catalog.brands.update');
+        Route::patch('/catalog/brands/{brand}/status', [CatalogController::class, 'toggleBrand'])->name('catalog.brands.toggle');
     });
 
     Route::middleware('permission:inventory.view')->group(function () {
