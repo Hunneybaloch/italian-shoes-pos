@@ -126,6 +126,10 @@ bash scripts/restore-database.sh --confirm storage/app/private/backups/your-back
 
 Keep encrypted backup copies outside the application server. Perform a restore drill on a separate staging database.
 
+## User guide
+
+See [docs/full-system-user-guide.md](docs/full-system-user-guide.md) for step-by-step instructions for branches, employees, catalogue, inventory, purchases, POS, returns, cashbook, reports and backups.
+
 ## Before going live
 
 - [ ] Install on a clean staging database using the intended MySQL/MariaDB version.
