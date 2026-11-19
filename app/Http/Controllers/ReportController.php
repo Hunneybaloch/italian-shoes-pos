@@ -32,9 +32,10 @@ class ReportController extends Controller
             ->orderBy('sold_at');
         return response()->streamDownload(function()use($query){
             $output=fopen('php://output','w');
+            $safeText=fn($value)=>is_string($value) && preg_match('/^[=+@\\-\\t\\r]/',$value) ? "'".$value : $value;
             fputcsv($output,['Receipt','Date','Branch','Customer','Cashier','Subtotal PKR','Discount PKR','Tax PKR','Total PKR','Paid PKR','Change PKR','Status']);
             foreach($query->cursor() as $sale){
-                fputcsv($output,[$sale->receipt_number,$sale->sold_at,$sale->branch?->name,$sale->customer?->name??'Walk-in',$sale->cashier?->name,$sale->subtotal,$sale->discount_amount,$sale->tax_amount,$sale->total_amount,$sale->amount_paid,$sale->change_amount,$sale->status]);
+                fputcsv($output,[$safeText($sale->receipt_number),$sale->sold_at,$safeText($sale->branch?->name),$safeText($sale->customer?->name??'Walk-in'),$safeText($sale->cashier?->name),$sale->subtotal,$sale->discount_amount,$sale->tax_amount,$sale->total_amount,$sale->amount_paid,$sale->change_amount,$safeText($sale->status)]);
             }
             fclose($output);
         },'italian-shoes-sales-'.$from.'-to-'.$to.'.csv',['Content-Type'=>'text/csv; charset=UTF-8']);
