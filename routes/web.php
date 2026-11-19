@@ -19,6 +19,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\CashbookController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -104,9 +105,11 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('permission:expenses.view')->group(function () {
         Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+        Route::get('/cashbook', [CashbookController::class, 'index'])->name('cashbook.index');
     });
     Route::middleware('permission:expenses.manage')->group(function () {
         Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
+        Route::post('/cashbook', [CashbookController::class, 'store'])->name('cashbook.store');
     });
     Route::middleware('permission:reports.view')->group(function () {
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
