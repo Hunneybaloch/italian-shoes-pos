@@ -64,7 +64,7 @@ class SaleReturnTest extends TestCase
         $this->actingAs($this->owner)->post(route('returns.store',$sale),[
             'return_type'=>'refund','reason'=>'Duplicate request',
             'items'=>[['sale_item_id'=>$saleItem->id,'quantity'=>2]],
-        ])->assertSessionHasErrors();
+        ])->assertStatus(422);
     }
 
     public function test_exchange_restocks_returned_pair_and_deducts_replacement_pair(): void
