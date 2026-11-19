@@ -7,7 +7,7 @@ use App\\Http\\Controllers\\ProductController;
 use App\\Http\\Controllers\\InventoryController;
 use App\\Http\\Controllers\\SupplierController;
 use App\\Http\\Controllers\\PurchaseController;
-use App\\Http\\Controllers\\StockTransferController;
+use App\\Http\\Controllers\\StockTransferController;\nuse App\\Http\\Controllers\\PosController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -54,7 +54,17 @@ Route::middleware('auth')->group(function () {
         Route::patch('/transfers/{transfer}/receive', [StockTransferController::class, 'receive'])->name('transfers.receive');
     });
 
-    Route::middleware('owner')->group(function () {
+
+    Route::middleware('permission:sales.view')->group(function () {
+        Route::get('/sales', [PosController::class, 'sales'])->name('sales.index');
+        Route::get('/sales/{sale}/receipt', [PosController::class, 'receipt'])->name('sales.receipt');
+    });
+    Route::middleware('permission:sales.create')->group(function () {
+        Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+        Route::get('/pos/search', [PosController::class, 'search'])->name('pos.search');
+        Route::post('/sales', [PosController::class, 'store'])->name('sales.store');
+    });
+\n    Route::middleware('owner')->group(function () {
         Route::get('/branches', [BranchController::class, 'index'])->name('branches.index');
         Route::get('/branches/create', [BranchController::class, 'create'])->name('branches.create');
         Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');
