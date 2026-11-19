@@ -1,15 +1,15 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Models\\ActivityLog;
-use App\\Models\\Branch;
-use App\\Models\\Role;
-use App\\Models\\SystemSetting;
-use App\\Models\\User;
-use Database\\Seeders\\RolePermissionSeeder;
-use Illuminate\\Foundation\\Testing\\RefreshDatabase;
-use Tests\\TestCase;
+use App\Models\ActivityLog;
+use App\Models\Branch;
+use App\Models\Role;
+use App\Models\SystemSetting;
+use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class AdministrationTest extends TestCase
 {
