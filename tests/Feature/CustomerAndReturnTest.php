@@ -1,17 +1,17 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Models\\Branch;
-use App\\Models\\Category;
-use App\\Models\\Product;
-use App\\Models\\Role;
-use App\\Models\\Sale;
-use App\\Models\\User;
-use App\\Services\\StockService;
-use Database\\Seeders\\RolePermissionSeeder;
-use Illuminate\\Foundation\\Testing\\RefreshDatabase;
-use Tests\\TestCase;
+use App\Models\Branch;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Role;
+use App\Models\Sale;
+use App\Models\User;
+use App\Services\StockService;
+use Database\Seeders\RolePermissionSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class CustomerAndReturnTest extends TestCase
 {
