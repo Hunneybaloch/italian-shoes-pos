@@ -11,7 +11,7 @@
 @if($user->hasPermission('sales.view'))<a href="{{ route('sales.index') }}">▤ &nbsp; Sales History</a>@endif
 @if($user->hasPermission('sales.returns'))<a href="{{ route('returns.index') }}">↩ &nbsp; Returns & Exchanges</a>@endif
 @if($user->hasPermission('customers.view'))<a href="{{ route('customers.index') }}">♙ &nbsp; Customers</a>@endif
-@if($user->hasPermission('expenses.view'))<a href="{{ route('expenses.index') }}">◷ &nbsp; Expenses</a>@endif
+@if($user->hasPermission('expenses.view'))<a href="{{ route('expenses.index') }}">◷ &nbsp; Expenses</a><a href="{{ route('cashbook.index') }}">▤ &nbsp; Cashbook</a>@endif
 @if($user->hasPermission('reports.view'))<a href="{{ route('reports.index') }}">▥ &nbsp; Reports</a>@endif
 @if($user->hasPermission('activity-logs.view'))<a href="{{ route('activity-logs.index') }}">◷ &nbsp; Activity Logs</a>@endif
 @if($owner)<a href="{{ route('settings.index') }}">⚙ &nbsp; Settings</a>@endif
@@ -30,6 +30,6 @@
 @if($user->hasPermission('products.create'))<a href="{{ route('products.create') }}">＋ Add Product</a>@endif
 @if($user->hasPermission('sales.create'))<a href="{{ route('pos.index') }}">＋ New Sale</a>@endif
 @if($user->hasPermission('inventory.manage'))<a href="{{ route('purchases.create') }}">＋ Receive Purchase</a>@endif
-@if($user->hasPermission('expenses.manage'))<a href="{{ route('expenses.index') }}">＋ Record Expense</a>@endif
+@if($user->hasPermission('expenses.manage'))<a href="{{ route('expenses.index') }}">＋ Record Expense</a><a href="{{ route('cashbook.index') }}">▤ Cashbook</a>@endif
 @if($user->hasPermission('reports.view'))<a href="{{ route('reports.index') }}">▥ View Reports</a>@endif
 </div></div></div></section></main></div></body></html>
