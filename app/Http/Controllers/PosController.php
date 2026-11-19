@@ -77,6 +77,7 @@ class PosController extends Controller
             }
             $subtotal = round($subtotal, 2);
             $discount = round((float) ($data['discount_amount'] ?? 0), 2);
+            abort_if($discount > 0 && ! $user->hasPermission('sales.discount'), 403, 'You do not have permission to apply sales discounts.');
             $taxRate = (float) (SystemSetting::where('key', 'default_tax_rate')->value('value') ?? 0);
             $tax = round(max(0, ($subtotal - $discount) * $taxRate / 100), 2);
             abort_if($discount > $subtotal, 422, 'Discount cannot exceed the subtotal.');
