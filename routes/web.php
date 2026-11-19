@@ -7,7 +7,7 @@ use App\\Http\\Controllers\\ProductController;
 use App\\Http\\Controllers\\InventoryController;
 use App\\Http\\Controllers\\SupplierController;
 use App\\Http\\Controllers\\PurchaseController;
-use App\\Http\\Controllers\\StockTransferController;\nuse App\\Http\\Controllers\\PosController;
+use App\\Http\\Controllers\\StockTransferController;\nuse App\\Http\\Controllers\\PosController;\nuse App\\Http\\Controllers\\CustomerController;\nuse App\\Http\\Controllers\\SaleReturnController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -63,6 +63,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
         Route::get('/pos/search', [PosController::class, 'search'])->name('pos.search');
         Route::post('/sales', [PosController::class, 'store'])->name('sales.store');
+    });
+\n
+    Route::middleware('permission:customers.view')->group(function () {
+        Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+    });
+    Route::middleware('permission:customers.manage')->group(function () {
+        Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
+        Route::put('/customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
+        Route::patch('/customers/{customer}/status', [CustomerController::class, 'toggle'])->name('customers.toggle');
+    });
+    Route::middleware('permission:sales.returns')->group(function () {
+        Route::get('/returns', [SaleReturnController::class, 'index'])->name('returns.index');
+        Route::get('/sales/{sale}/returns/create', [SaleReturnController::class, 'create'])->name('returns.create');
+        Route::post('/sales/{sale}/returns', [SaleReturnController::class, 'store'])->name('returns.store');
     });
 \n    Route::middleware('owner')->group(function () {
         Route::get('/branches', [BranchController::class, 'index'])->name('branches.index');
