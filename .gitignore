@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!.env.codespaces.example
 auth.json
 
 # Dependencies

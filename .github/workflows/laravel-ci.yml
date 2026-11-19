@@ -1,0 +1,57 @@
+name: Laravel CI
+
+on:
+  push:
+    branches:
+      - main
+      - automation/**
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Laravel setup, migrations, assets and feature tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: bcmath, ctype, curl, dom, fileinfo, mbstring, openssl, pdo_sqlite, sqlite3, tokenizer, xml
+          coverage: none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate Composer configuration
+        run: composer validate --no-check-publish
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare isolated SQLite environment
+        run: |
+          cp .env.codespaces.example .env
+          mkdir -p database
+          touch database/database.sqlite
+          php artisan key:generate
+
+      - name: Run migrations and seed reference data
+        run: php artisan migrate --seed --force
+
+      - name: Install frontend dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Run automated tests
+        run: php artisan test

@@ -32,6 +32,20 @@ class AuthController extends Controller
         ];
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $user = $request->user();
+
+            // Employees must not sign in to a branch that the Owner has deactivated.
+            // The system-wide Owner has no branch and remains unaffected.
+            if ($user->branch_id !== null && (!$user->branch || !$user->branch->is_active)) {
+                Auth::logout();
+
+                return back()
+                    ->withErrors([
+                        'login' => 'This account belongs to an inactive branch. Please contact the system Owner.',
+                    ])
+                    ->onlyInput('login');
+            }
+
             $request->session()->regenerate();
 
             return redirect()->intended(route('dashboard'));
