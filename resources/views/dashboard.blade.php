@@ -226,11 +226,11 @@
         <nav class="nav">
             <a href="{{ route('dashboard') }}" class="active">▦ &nbsp; Dashboard</a>
             <a href="{{ route('branches.index') }}">▣ &nbsp; Branch Management</a>
-            <a href="#">♙ &nbsp; User Management</a>
+            <a href="{{ route('customers.index') }}">♙ &nbsp; Customers</a>
             <a href="{{ route('products.index') }}">◈ &nbsp; Products</a>
             <a href="{{ route('inventory.index') }}">▤ &nbsp; Inventory</a>
             <a href="{{ route('purchases.index') }}">▣ &nbsp; Purchases</a>
-            <a href="#">◷ &nbsp; Expenses</a>
+            <a href="{{ route('returns.index') }}">↩ &nbsp; Returns & Exchanges</a>
             <a href="#">▥ &nbsp; Reports</a>
             <a href="#">⚙ &nbsp; Settings</a>
         </nav>
