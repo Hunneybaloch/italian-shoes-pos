@@ -1,25 +1,22 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BranchController;
-use App\Http\Controllers\ProductController;
+use Illuminate\\Support\\Facades\\Route;
+use App\\Http\\Controllers\\AuthController;
+use App\\Http\\Controllers\\BranchController;
+use App\\Http\\Controllers\\ProductController;
+use App\\Http\\Controllers\\InventoryController;
+use App\\Http\\Controllers\\SupplierController;
+use App\\Http\\Controllers\\PurchaseController;
+use App\\Http\\Controllers\\StockTransferController;
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])
-        ->name('login');
-
-    Route::post('/login', [AuthController::class, 'login'])
-        ->name('login.submit');
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-    Route::post('/logout', [AuthController::class, 'logout'])
-        ->name('logout');
+    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::middleware('permission:products.view')->group(function () {
         Route::get('/products', [ProductController::class, 'index'])->name('products.index');
@@ -36,31 +33,35 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    Route::middleware('permission:inventory.view')->group(function () {
+        Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+        Route::get('/inventory/history', [InventoryController::class, 'history'])->name('inventory.history');
+    });
+    Route::middleware('permission:inventory.manage')->group(function () {
+        Route::post('/inventory/adjust', [InventoryController::class, 'adjust'])->name('inventory.adjust');
+        Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
+        Route::post('/suppliers', [SupplierController::class, 'store'])->name('suppliers.store');
+        Route::patch('/suppliers/{supplier}/status', [SupplierController::class, 'toggle'])->name('suppliers.toggle');
+        Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+        Route::get('/purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
+        Route::post('/purchases', [PurchaseController::class, 'store'])->name('purchases.store');
+    });
+    Route::middleware('permission:inventory.transfer')->group(function () {
+        Route::get('/transfers', [StockTransferController::class, 'index'])->name('transfers.index');
+        Route::get('/transfers/create', [StockTransferController::class, 'create'])->name('transfers.create');
+        Route::post('/transfers', [StockTransferController::class, 'store'])->name('transfers.store');
+        Route::patch('/transfers/{transfer}/approve', [StockTransferController::class, 'approve'])->name('transfers.approve');
+        Route::patch('/transfers/{transfer}/receive', [StockTransferController::class, 'receive'])->name('transfers.receive');
+    });
+
     Route::middleware('owner')->group(function () {
-        Route::get('/branches', [BranchController::class, 'index'])
-            ->name('branches.index');
-
-        Route::get('/branches/create', [BranchController::class, 'create'])
-            ->name('branches.create');
-
-        Route::post('/branches', [BranchController::class, 'store'])
-            ->name('branches.store');
-
-        Route::get('/branches/{branch}', [BranchController::class, 'show'])
-            ->whereNumber('branch')
-            ->name('branches.show');
-
-        Route::get('/branches/{branch}/edit', [BranchController::class, 'edit'])
-            ->whereNumber('branch')
-            ->name('branches.edit');
-
-        Route::put('/branches/{branch}', [BranchController::class, 'update'])
-            ->whereNumber('branch')
-            ->name('branches.update');
-
-        Route::patch('/branches/{branch}/status', [BranchController::class, 'toggleStatus'])
-            ->whereNumber('branch')
-            ->name('branches.toggle-status');
+        Route::get('/branches', [BranchController::class, 'index'])->name('branches.index');
+        Route::get('/branches/create', [BranchController::class, 'create'])->name('branches.create');
+        Route::post('/branches', [BranchController::class, 'store'])->name('branches.store');
+        Route::get('/branches/{branch}', [BranchController::class, 'show'])->whereNumber('branch')->name('branches.show');
+        Route::get('/branches/{branch}/edit', [BranchController::class, 'edit'])->whereNumber('branch')->name('branches.edit');
+        Route::put('/branches/{branch}', [BranchController::class, 'update'])->whereNumber('branch')->name('branches.update');
+        Route::patch('/branches/{branch}/status', [BranchController::class, 'toggleStatus'])->whereNumber('branch')->name('branches.toggle-status');
     });
 });
 
