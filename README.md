@@ -16,7 +16,7 @@ The system is designed for three initial branches, with the ability to add more 
 | Area | Current implementation |
 |---|---|
 | Application | Laravel 13 web application |
-| PHP | PHP 8.3 or newer (Composer constraint: `^8.3`) |
+| PHP | PHP 8.4.1+ required by the currently locked Symfony packages (development uses PHP 8.5) |
 | Database | MySQL/MariaDB for the intended deployment |
 | Codespaces development | Isolated SQLite database |
 | Frontend build | Vite, Tailwind CSS |
@@ -105,3 +105,5 @@ For local Windows development, use the existing project `.env` and XAMPP MySQL c
 - Preserve audit history for important operations.
 - Use database transactions for operations that must succeed or fail together.
 - Keep development and test databases separate from production data.
+
+**Dependency note:** `composer.json` currently declares `^8.3`, but the committed lock file contains Symfony 8.1 packages that require PHP 8.4.1 or newer. CI and Codespaces use PHP 8.5 to match the lock file. The declared minimum and lock file should be reconciled before supporting PHP 8.3.
