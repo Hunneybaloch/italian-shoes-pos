@@ -82,6 +82,23 @@ class PosSalesTest extends TestCase
         ]);
     }
 
+
+    public function test_cashier_cannot_apply_a_discount_without_permission(): void
+    {
+        $this->actingAs($this->cashier)->post(route('sales.store'),[
+            'branch_id'=>$this->branch->id,
+            'discount_amount'=>100,
+            'payment_method'=>'cash',
+            'amount_paid'=>2500,
+            'items'=>[['product_variant_id'=>$this->variant->id,'quantity'=>1]],
+        ])->assertForbidden();
+
+        $this->assertDatabaseCount('sales',0);
+        $this->assertDatabaseHas('branch_stocks',[
+            'branch_id'=>$this->branch->id,'product_variant_id'=>$this->variant->id,'quantity'=>5,
+        ]);
+    }
+
     public function test_cashier_cannot_sell_from_another_branch(): void
     {
         $other = Branch::create(['name'=>'Other Branch','code'=>'POS2','is_active'=>true]);
