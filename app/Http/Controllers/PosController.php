@@ -56,7 +56,6 @@ class PosController extends Controller
             'branch_id' => ['required','integer',Rule::exists('branches','id')->where('is_active',true)],
             'customer_id' => ['nullable','integer',Rule::exists('customers','id')->where('is_active',true)],
             'discount_amount' => ['nullable','numeric','min:0','max:9999999999'],
-            'tax_amount' => ['nullable','numeric','min:0','max:9999999999'],
             'payment_method' => ['required',Rule::in(['cash','card','bank_transfer','mobile_wallet','other'])],
             'payment_reference' => ['nullable','string','max:120'],
             'amount_paid' => ['required','numeric','min:0','max:9999999999'],
@@ -78,7 +77,8 @@ class PosController extends Controller
             }
             $subtotal = round($subtotal, 2);
             $discount = round((float) ($data['discount_amount'] ?? 0), 2);
-            $tax = round((float) ($data['tax_amount'] ?? 0), 2);
+            $taxRate = (float) (SystemSetting::where('key', 'default_tax_rate')->value('value') ?? 0);
+            $tax = round(max(0, ($subtotal - $discount) * $taxRate / 100), 2);
             abort_if($discount > $subtotal, 422, 'Discount cannot exceed the subtotal.');
             $total = round($subtotal - $discount + $tax, 2);
             $paid = round((float) $data['amount_paid'], 2);
