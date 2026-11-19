@@ -72,7 +72,7 @@ class CustomerAndReturnTest extends TestCase
         $this->actingAs($this->owner)->post(route('returns.store',$sale),[
             'return_type'=>'refund','reason'=>'Repeat return',
             'items'=>[['sale_item_id'=>$item->id,'quantity'=>2]],
-        ])->assertSessionHasErrors();
+        ])->assertStatus(422);
     }
 
     public function test_exchange_returns_old_item_and_deducts_replacement_with_balance_payment(): void
