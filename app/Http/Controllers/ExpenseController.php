@@ -1,12 +1,12 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\Branch;
-use App\\Models\\CashTransaction;
-use App\\Models\\Expense;
-use Illuminate\\Http\\Request;
-use Illuminate\\Validation\\Rule;
+use App\Models\Branch;
+use App\Models\CashTransaction;
+use App\Models\Expense;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ExpenseController extends Controller
 {
@@ -33,7 +33,7 @@ class ExpenseController extends Controller
             'expense_date'=>['required','date'],
         ]);
         abort_unless($user->hasRole('owner') || $user->branch_id===(int)$data['branch_id'],403);
-        \\Illuminate\\Support\\Facades\\DB::transaction(function() use($data,$user){
+        \Illuminate\Support\Facades\DB::transaction(function() use($data,$user){
             $expense=Expense::create($data+['created_by'=>$user->id]);
             if($data['payment_method']==='cash'){
                 CashTransaction::create([
