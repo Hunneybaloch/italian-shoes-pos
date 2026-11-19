@@ -102,8 +102,8 @@ php artisan test
 ## Automated validation
 
 Latest GitHub Actions run for the complete development branch:
-- SQLite: **37 tests passed, 160 assertions**
-- MySQL 8.4: **37 tests passed, 160 assertions**
+- SQLite: **40 tests passed, 170 assertions**
+- MySQL 8.4: **40 tests passed, 170 assertions**
 - Composer validation, frontend build and shell script syntax checks passed.
 
 See the GitHub Actions workflow at `.github/workflows/laravel-ci.yml`.
