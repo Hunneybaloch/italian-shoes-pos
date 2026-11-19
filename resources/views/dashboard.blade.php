@@ -228,8 +228,8 @@
             <a href="{{ route('branches.index') }}">▣ &nbsp; Branch Management</a>
             <a href="#">♙ &nbsp; User Management</a>
             <a href="{{ route('products.index') }}">◈ &nbsp; Products</a>
-            <a href="#">▤ &nbsp; Inventory</a>
-            <a href="#">▣ &nbsp; Sales & POS</a>
+            <a href="{{ route('inventory.index') }}">▤ &nbsp; Inventory</a>
+            <a href="{{ route('purchases.index') }}">▣ &nbsp; Purchases</a>
             <a href="#">◷ &nbsp; Expenses</a>
             <a href="#">▥ &nbsp; Reports</a>
             <a href="#">⚙ &nbsp; Settings</a>
