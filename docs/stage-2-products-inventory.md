@@ -47,3 +47,26 @@ E. Low-stock views, role restrictions and full regression tests.
 ## Safety
 
 New migrations are additive. They do not drop, truncate or reset existing tables or records. No real branch or product data is inserted by migrations.
+
+
+## Catalogue implementation status
+
+### Implemented on `stage-2-products-inventory`
+
+- Shared category and brand creation with generated unique slugs.
+- Product listing with search by product/model/SKU/barcode, category filter and active-status filter.
+- Product creation and editing with one or more size/colour variants.
+- Required unique SKU, optional unique barcode, cost price and selling price in PKR.
+- Product activation/deactivation instead of destructive deletion.
+- Server-side permission middleware: Owner has full access; Stock Manager can create/edit; Branch Manager and Cashier can view.
+- Product/variant creation and updates are wrapped in database transactions.
+- Feature tests cover category/brand/product creation, multi-variant creation, permissions, duplicate SKUs and editing.
+
+### Remaining Stage 2 work
+
+- Category/brand edit and activation management.
+- Stock ledger and safe adjustment screens.
+- Supplier management and purchase receiving.
+- Inter-branch stock transfer workflow.
+- Low-stock dashboard and reporting.
+- Full MySQL/MariaDB verification and final regression test pass.
