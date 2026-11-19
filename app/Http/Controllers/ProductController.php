@@ -173,7 +173,7 @@ class ProductController extends Controller
             'product' => [
                 'name' => $validated['product']['name'],
                 'category_id' => $validated['product']['category_id'],
-                'brand_id' => $validated['product']['brand_id'] ?: null,
+                'brand_id' => ($validated['product']['brand_id'] ?? null) ?: null,
                 'model_code' => $validated['product']['model_code'] ?: null,
                 'description' => $validated['product']['description'] ?? null,
             ],
