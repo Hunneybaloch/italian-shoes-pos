@@ -45,8 +45,8 @@ class SaleReturnController extends Controller
             'replacement_items'=>['nullable','array','max:100'],
             'replacement_items.*.product_variant_id'=>['required','integer','distinct','exists:product_variants,id'],
             'replacement_items.*.quantity'=>['required','integer','min:1','max:10000'],
-            'payment_method'=>['nullable',Rule::in(['cash','card','bank_transfer','mobile_wallet','other'])],
-            'amount_paid'=>['nullable','numeric','min:0','max:9999999999'],
+            'payment_method'=>['required_if:return_type,exchange','nullable',Rule::in(['cash','card','bank_transfer','mobile_wallet','other'])],
+            'amount_paid'=>['required_if:return_type,exchange','nullable','numeric','min:0','max:9999999999'],
         ]);
 
         $return=DB::transaction(function() use($sale,$data,$user,$stockService){
@@ -62,8 +62,11 @@ class SaleReturnController extends Controller
                     ->where('sale_returns.status','completed')->sum('sale_return_items.quantity');
                 $qty=(int)$row['quantity'];
                 abort_if($qty > ($saleItem->quantity-$already),422,'Return quantity exceeds the quantity originally sold minus previous returns.');
-                $returnValue += (float)$saleItem->unit_price*$qty;
-                $resolved[]=['sale_item'=>$saleItem,'quantity'=>$qty];
+                $effectiveUnit = (float) $lockedSale->subtotal > 0
+                    ? (float) $saleItem->unit_price * ((float) $lockedSale->total_amount / (float) $lockedSale->subtotal)
+                    : 0;
+                $returnValue += $effectiveUnit * $qty;
+                $resolved[]=['sale_item'=>$saleItem,'quantity'=>$qty,'effective_unit'=>$effectiveUnit];
             }
             $returnValue=round($returnValue,2);
             $replacementRows=$data['replacement_items']??[];
@@ -97,7 +100,7 @@ class SaleReturnController extends Controller
                 $item=$entry['sale_item'];$qty=$entry['quantity'];
                 $record->items()->create([
                     'sale_item_id'=>$item->id,'product_variant_id'=>$item->product_variant_id,
-                    'quantity'=>$qty,'unit_refund'=>$item->unit_price,'restocked'=>true,
+                    'quantity'=>$qty,'unit_refund'=>$entry['effective_unit'],'restocked'=>true,
                 ]);
                 $stockService->change($lockedSale->branch_id,$item->product_variant_id,$qty,$user->id,'sale_return','sale_return',$record->id,'Return '.$record->return_number);
             }
