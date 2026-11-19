@@ -67,7 +67,7 @@ All stock changes use transactions and reject negative stock.
 4. Add the matching size/colour variant to the cart.
 5. Adjust quantities within available stock.
 6. Select a customer if applicable; otherwise use Walk-in Customer.
-7. Apply a discount if authorized and review the configured tax rate.
+7. Apply a discount only if your role has the dedicated discount permission. Cashiers cannot apply discounts by default. Review the configured tax rate.
 8. Select payment method and enter the amount received.
 9. Complete the sale. The system calculates totals server-side, checks stock and writes the sale, payment, stock deduction and ledger movement in one transaction.
 10. Print the receipt from the receipt page.
