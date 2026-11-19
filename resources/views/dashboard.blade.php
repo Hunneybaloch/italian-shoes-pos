@@ -225,7 +225,7 @@
 
         <nav class="nav">
             <a href="{{ route('dashboard') }}" class="active">▦ &nbsp; Dashboard</a>
-            <a href="#">▣ &nbsp; Branch Management</a>
+            <a href="{{ route('branches.index') }}">▣ &nbsp; Branch Management</a>
             <a href="#">♙ &nbsp; User Management</a>
             <a href="#">◈ &nbsp; Products</a>
             <a href="#">▤ &nbsp; Inventory</a>
@@ -309,7 +309,7 @@
                     <div class="section-title">Quick Actions</div>
 
                     <div class="quick-links">
-                        <a href="#">＋ Add Branch</a>
+                        <a href="{{ route('branches.create') }}">＋ Add Branch</a>
                         <a href="#">＋ Add Employee</a>
                         <a href="#">＋ Add Product</a>
                         <a href="#">▤ View Reports</a>
