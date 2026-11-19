@@ -6,6 +6,10 @@ on:
       - main
       - automation/**
       - stage-2-*
+      - stage-3-*
+      - stage-4-*
+      - stage-5-*
+      - stage-6-*
   pull_request:
   workflow_dispatch:
 
@@ -13,8 +17,8 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: Laravel setup, migrations, assets and feature tests
+  sqlite:
+    name: SQLite setup, frontend build and feature tests
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -31,6 +35,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Check shell script syntax
+        run: bash -n scripts/*.sh
 
       - name: Validate Composer configuration
         run: composer validate --no-check-publish
@@ -55,4 +62,56 @@ jobs:
         run: npm run build
 
       - name: Run automated tests
+        run: php artisan test
+
+  mysql:
+    name: MySQL 8.4 migration and feature tests
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: italian_shoes_pos_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: italian_shoes_pos_test
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP with MySQL driver
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: bcmath, ctype, curl, dom, fileinfo, mbstring, openssl, pdo_mysql, pdo_sqlite, sqlite3, tokenizer, xml
+          coverage: none
+
+      - name: Validate Composer configuration
+        run: composer validate --no-check-publish
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare MySQL test environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run all migrations and reference seeders on MySQL
+        run: php artisan migrate --seed --force
+
+      - name: Run feature tests on MySQL
         run: php artisan test
