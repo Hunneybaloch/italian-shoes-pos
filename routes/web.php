@@ -15,6 +15,9 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SupplierPaymentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\SettingController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -98,6 +101,29 @@ Route::middleware('auth')->group(function () {
     Route::middleware('permission:inventory.manage')->group(function () {
         Route::get('/supplier-payments', [SupplierPaymentController::class, 'index'])->name('supplier-payments.index');
         Route::post('/purchases/{purchase}/payments', [SupplierPaymentController::class, 'store'])->name('purchases.payments.store');
+    });
+
+
+    Route::middleware('permission:employees.view')->group(function () {
+        Route::get('/employees', [UserController::class, 'index'])->name('employees.index');
+    });
+    Route::middleware('permission:employees.create')->group(function () {
+        Route::get('/employees/create', [UserController::class, 'create'])->name('employees.create');
+        Route::post('/employees', [UserController::class, 'store'])->name('employees.store');
+    });
+    Route::middleware('permission:employees.edit')->group(function () {
+        Route::get('/employees/{employee}/edit', [UserController::class, 'edit'])->name('employees.edit');
+        Route::put('/employees/{employee}', [UserController::class, 'update'])->name('employees.update');
+    });
+    Route::middleware('permission:employees.deactivate')->group(function () {
+        Route::patch('/employees/{employee}/status', [UserController::class, 'toggle'])->name('employees.toggle');
+    });
+    Route::middleware('permission:activity-logs.view')->group(function () {
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+    });
+    Route::middleware('owner')->group(function () {
+        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
     });
 
     Route::middleware('owner')->group(function () {
