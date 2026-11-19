@@ -97,7 +97,7 @@ bash scripts/codespaces-test.sh
 
 ## Automated GitHub checks
 
-The workflow in `.github/workflows/laravel-ci.yml` checks Composer configuration, installs PHP dependencies, applies migrations and reference seed data to an isolated SQLite database, builds frontend assets and runs the feature tests. MySQL/MariaDB deployment compatibility still requires a separate staging verification.
+The workflow in `.github/workflows/laravel-ci.yml` checks Composer configuration, installs PHP dependencies, applies migrations and reference seed data to a temporary MySQL 8 service, builds frontend assets and runs the feature tests against an isolated SQLite in-memory database. This verifies MySQL schema compatibility without using any real business database.
 
 ## Local XAMPP setup
 
