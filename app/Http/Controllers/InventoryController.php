@@ -1,15 +1,15 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\Branch;
-use App\\Models\\BranchStock;
-use App\\Models\\ProductVariant;
-use App\\Models\\StockMovement;
-use App\\Services\\StockService;
-use Illuminate\\Http\\Request;
-use Illuminate\\Support\\Facades\\DB;
-use Illuminate\\Validation\\Rule;
+use App\Models\Branch;
+use App\Models\BranchStock;
+use App\Models\ProductVariant;
+use App\Models\StockMovement;
+use App\Services\StockService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class InventoryController extends Controller
 {
