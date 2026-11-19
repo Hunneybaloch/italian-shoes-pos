@@ -1,16 +1,16 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\Branch;
-use App\\Models\\Customer;
-use App\\Models\\ProductVariant;
-use App\\Models\\Sale;
-use App\\Services\\StockService;
-use Illuminate\\Http\\Request;
-use Illuminate\\Support\\Facades\\DB;
-use Illuminate\\Support\\Str;
-use Illuminate\\Validation\\Rule;
+use App\Models\Branch;
+use App\Models\Customer;
+use App\Models\ProductVariant;
+use App\Models\Sale;
+use App\Services\StockService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class PosController extends Controller
 {
