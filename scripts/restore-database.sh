@@ -19,10 +19,10 @@ if [[ ! -f "$BACKUP_PATH" ]]; then echo "Backup file not found." >&2; exit 1; fi
 if [[ -f .env ]]; then
   eval "$(php -r '
     require "vendor/autoload.php";
-    Dotenv\\Dotenv::createImmutable(__DIR__)->safeLoad();
+    Dotenv\Dotenv::createImmutable(__DIR__)->safeLoad();
     foreach (["DB_HOST","DB_PORT","DB_DATABASE","DB_USERNAME","DB_PASSWORD"] as $key) {
       $value = $_ENV[$key] ?? $_SERVER[$key] ?? "";
-      echo "export ".$key."=".escapeshellarg($value)."\\n";
+      echo "export ".$key."=".escapeshellarg($value)."\n";
     }
   ')"
 fi
